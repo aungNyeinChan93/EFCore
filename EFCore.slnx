@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="EFCore.api/EFCore.api.csproj" />
+  <Project Path="EFCore.data/EFCore.data.csproj" />
+  <Project Path="EFCore.domain/EFCore.domain.csproj" />
+  <Project Path="EFCore.test/EFCore.test.csproj" />
+</Solution>
