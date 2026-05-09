@@ -15,7 +15,32 @@ namespace EFCore.data.Data
             optionsBuilder.UseSqlServer(this._connection);
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            //base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<TeacherUser>()
+                .HasKey(tu=> new {tu.TeacherId,tu.UserId});
+
+            modelBuilder.Entity<TeacherUser>()
+                .HasOne(tu => tu.Teacher)
+                .WithMany(t => t.TeacherUser)
+                .HasForeignKey(tu => tu.TeacherId);
+
+            modelBuilder.Entity<TeacherUser>()
+                .HasOne(tu=>tu.User)
+                .WithMany(u=> u.TeacherUser)
+                .HasForeignKey(tu=>tu.UserId);
+        }
+
         public DbSet<League> Leagues { get; set; }
         public DbSet<Team> Teams { get; set; }
+        public DbSet<Player> Players { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<UserDetail> UserDetails { get; set; }
+        public  DbSet<School> Schools { get; set; }
+
+        public DbSet<Teacher> Teachers { get; set; }
+
+        public DbSet<TeacherUser> TeacherUsers { get; set; }
     }
 }

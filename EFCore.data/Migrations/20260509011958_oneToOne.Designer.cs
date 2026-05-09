@@ -3,6 +3,7 @@ using EFCore.data.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EFCore.data.Migrations
 {
     [DbContext(typeof(FootballDbContext))]
-    partial class FootballDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260509011958_oneToOne")]
+    partial class oneToOne
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -73,55 +76,6 @@ namespace EFCore.data.Migrations
                     b.ToTable("Players");
                 });
 
-            modelBuilder.Entity("EFCore.domain.Entities.School", b =>
-                {
-                    b.Property<int>("SchoolId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SchoolId"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("SchoolId");
-
-                    b.ToTable("Schools");
-                });
-
-            modelBuilder.Entity("EFCore.domain.Entities.Teacher", b =>
-                {
-                    b.Property<int>("TeacherId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TeacherId"));
-
-                    b.Property<string>("name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("TeacherId");
-
-                    b.ToTable("Teachers");
-                });
-
-            modelBuilder.Entity("EFCore.domain.Entities.TeacherUser", b =>
-                {
-                    b.Property<int>("TeacherId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("TeacherId", "UserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("TeacherUsers");
-                });
-
             modelBuilder.Entity("EFCore.domain.Entities.Team", b =>
                 {
                     b.Property<int>("TeamId")
@@ -160,12 +114,7 @@ namespace EFCore.data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("SchoolId")
-                        .HasColumnType("int");
-
                     b.HasKey("UserId");
-
-                    b.HasIndex("SchoolId");
 
                     b.ToTable("Users");
                 });
@@ -211,25 +160,6 @@ namespace EFCore.data.Migrations
                     b.Navigation("Team");
                 });
 
-            modelBuilder.Entity("EFCore.domain.Entities.TeacherUser", b =>
-                {
-                    b.HasOne("EFCore.domain.Entities.Teacher", "Teacher")
-                        .WithMany("TeacherUser")
-                        .HasForeignKey("TeacherId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("EFCore.domain.Entities.User", "User")
-                        .WithMany("TeacherUser")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Teacher");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("EFCore.domain.Entities.Team", b =>
                 {
                     b.HasOne("EFCore.domain.Entities.League", "League")
@@ -239,17 +169,6 @@ namespace EFCore.data.Migrations
                         .IsRequired();
 
                     b.Navigation("League");
-                });
-
-            modelBuilder.Entity("EFCore.domain.Entities.User", b =>
-                {
-                    b.HasOne("EFCore.domain.Entities.School", "School")
-                        .WithMany("Users")
-                        .HasForeignKey("SchoolId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("School");
                 });
 
             modelBuilder.Entity("EFCore.domain.Entities.UserDetail", b =>
@@ -268,16 +187,6 @@ namespace EFCore.data.Migrations
                     b.Navigation("Teams");
                 });
 
-            modelBuilder.Entity("EFCore.domain.Entities.School", b =>
-                {
-                    b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("EFCore.domain.Entities.Teacher", b =>
-                {
-                    b.Navigation("TeacherUser");
-                });
-
             modelBuilder.Entity("EFCore.domain.Entities.Team", b =>
                 {
                     b.Navigation("Palyers");
@@ -285,8 +194,6 @@ namespace EFCore.data.Migrations
 
             modelBuilder.Entity("EFCore.domain.Entities.User", b =>
                 {
-                    b.Navigation("TeacherUser");
-
                     b.Navigation("UserDetail");
                 });
 #pragma warning restore 612, 618

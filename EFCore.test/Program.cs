@@ -48,12 +48,20 @@ async Task MultipleAddTeam()
 async Task ALlTeams()
 {
 
-    var teams = await context.Teams.Include(t => t.League).AsNoTracking().ToListAsync();
+    var teams = await context.Teams
+        //.Include(t => t.Palyers)
+        .Include(t=> t.League)
+        .Select(t=> new
+        {
+            teamName = t.Name,
+            leagueName = t.League!.Name
+        })
+        .AsNoTracking().ToListAsync();
 
     foreach (var team in teams)
     {
-        Console.WriteLine(team.Name);
-        Console.WriteLine(team.League?.Name);
+        //Console.WriteLine(team.Name);
+        //Console.WriteLine(team.League?.Name);
         Console.WriteLine(JsonSerializer.Serialize(team, new JsonSerializerOptions { WriteIndented = true }));
     }
 }
@@ -143,12 +151,91 @@ async Task DeleteLeagues()
 }
 
 
+async Task GetAllLeagues()
+{
+    var leagues = await context.Leagues
+        .AsNoTracking()
+        .Include(x => x.Teams)
+        .ToListAsync();
 
+    Console.WriteLine(JsonSerializer.Serialize(leagues,new JsonSerializerOptions() { WriteIndented =true}));
+}
+
+
+async Task GetAllPayers()
+{
+    var players = await context.Players.AsNoTracking()
+        .Include(p => p.Team)
+        .Select(p=> new
+        {
+            PlayerInfo = new Player { PalyerId = p.PalyerId, Name = p.Name, Age = p.Age, Country = p.Country, AssistScore = p.AssistScore, GoalScore = p.GoalScore },
+            Team = p.Team!.Name
+
+        })
+        .ToListAsync();
+
+    Console.WriteLine(JsonSerializer.Serialize(players,new JsonSerializerOptions() { WriteIndented = true}));
+}
+
+async Task GetAllUsers()
+{
+    var users = await context.Users.AsNoTracking()
+                .Include(u => u.UserDetail)
+                .Include(u=>u.School)
+                .Select(u=> new
+                {
+                    user = u,
+                    userDetail = u.UserDetail,
+                    School = new 
+                    { 
+                        Name = u.School!.Name,
+                    }
+
+                })
+                .ToListAsync();
+
+    Console.WriteLine(JsonSerializer.Serialize(users,new JsonSerializerOptions() {WriteIndented = true }));
+}
+
+async Task GetAllUserDetails()
+{
+    var userDetails = await context.UserDetails.AsNoTracking()
+        .Include(u => u.User)
+        .Select(u => new
+        {
+            user =u.User,
+            userDetail = u,
+        })
+        .ToListAsync();
+
+    Console.WriteLine(JsonSerializer.Serialize(userDetails, new JsonSerializerOptions() { WriteIndented = true }));
+
+}
+
+async Task GetALLSchools()
+{
+    var schools = await context.Schools.AsNoTracking()
+        .Include(s => s.Users)
+        .ToListAsync();
+    Console.WriteLine(JsonSerializer.Serialize(schools, new JsonSerializerOptions() { WriteIndented = true }));
+
+}
+
+async Task GetAllTeachers()
+{
+    var teachers = await context.Teachers.AsNoTracking()
+        .Include(t => t.TeacherUser)
+        .ToListAsync();
+
+    Console.WriteLine(JsonSerializer.Serialize(teachers, new JsonSerializerOptions() { WriteIndented = true }));
+
+}
 
 
 //await AddData();
 //await MultipleAddTeam();
 //await ALlTeams();
+//await GetAllLeagues();
 //await FilterTeam(); 
 //LinqSelect();
 //await AddLeagues();
@@ -159,5 +246,14 @@ async Task DeleteLeagues()
 //await DeleteLeague(leagueId);
 
 //await DeleteLeagues();
+
+//var res = context.ChangeTracker.Entries();
+
+//await GetAllPayers();
+
+//await GetAllUsers();
+//await GetAllUserDetails();
+//await GetALLSchools();
+await GetAllTeachers();
 
 Console.ReadLine();
