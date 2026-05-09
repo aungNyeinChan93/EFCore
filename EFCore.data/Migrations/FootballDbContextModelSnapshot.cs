@@ -35,7 +35,7 @@ namespace EFCore.data.Migrations
 
                     b.HasKey("LeagueId");
 
-                    b.ToTable("Leagues");
+                    b.ToTable("Leagues", (string)null);
                 });
 
             modelBuilder.Entity("EFCore.domain.Entities.Player", b =>
@@ -70,7 +70,7 @@ namespace EFCore.data.Migrations
 
                     b.HasIndex("TeamId");
 
-                    b.ToTable("Players");
+                    b.ToTable("Players", (string)null);
                 });
 
             modelBuilder.Entity("EFCore.domain.Entities.School", b =>
@@ -87,7 +87,7 @@ namespace EFCore.data.Migrations
 
                     b.HasKey("SchoolId");
 
-                    b.ToTable("Schools");
+                    b.ToTable("Schools", (string)null);
                 });
 
             modelBuilder.Entity("EFCore.domain.Entities.Teacher", b =>
@@ -104,7 +104,7 @@ namespace EFCore.data.Migrations
 
                     b.HasKey("TeacherId");
 
-                    b.ToTable("Teachers");
+                    b.ToTable("Teachers", (string)null);
                 });
 
             modelBuilder.Entity("EFCore.domain.Entities.TeacherUser", b =>
@@ -119,7 +119,7 @@ namespace EFCore.data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TeacherUsers");
+                    b.ToTable("TeacherUsers", (string)null);
                 });
 
             modelBuilder.Entity("EFCore.domain.Entities.Team", b =>
@@ -141,7 +141,7 @@ namespace EFCore.data.Migrations
 
                     b.HasIndex("LeagueId");
 
-                    b.ToTable("Teams");
+                    b.ToTable("Teams", (string)null);
                 });
 
             modelBuilder.Entity("EFCore.domain.Entities.User", b =>
@@ -167,7 +167,7 @@ namespace EFCore.data.Migrations
 
                     b.HasIndex("SchoolId");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("EFCore.domain.Entities.UserDetail", b =>
@@ -197,7 +197,7 @@ namespace EFCore.data.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("UserDetails");
+                    b.ToTable("UserDetails", (string)null);
                 });
 
             modelBuilder.Entity("EFCore.domain.Entities.Player", b =>

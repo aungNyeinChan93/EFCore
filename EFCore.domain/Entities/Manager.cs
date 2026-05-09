@@ -6,13 +6,13 @@ using System.Text;
 
 namespace EFCore.domain.Entities
 {
-    public class School
+    [Table("Tbl_Managers")]
+    public class Manager
     {
         [Key]
-        public int SchoolId { get; set; }
+        public int ManagerId { get; set; }
 
+        [Column("ManagerName")]
         public required string Name { get; set; }
-
-        public ICollection<User>? Users { get; set; }
     }
 }

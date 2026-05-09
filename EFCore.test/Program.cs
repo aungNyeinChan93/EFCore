@@ -225,12 +225,118 @@ async Task GetAllTeachers()
 {
     var teachers = await context.Teachers.AsNoTracking()
         .Include(t => t.TeacherUser)
+        .ThenInclude(tu=> tu.User)
+        .Select(x=> new
+        {
+            TeacherName = x.name,
+            UserNames = x.TeacherUser.Select(u => u.User!.Name) 
+
+        })
         .ToListAsync();
 
     Console.WriteLine(JsonSerializer.Serialize(teachers, new JsonSerializerOptions() { WriteIndented = true }));
 
 }
 
+async Task GetAllTU()
+{
+    var tu = (from i in context.TeacherUsers
+              where i.User!.Name == "admin"
+              select new { user = i.User, teacherName = i.Teacher!.name }).ToList();
+
+    Console.WriteLine(JsonSerializer.Serialize(tu,new JsonSerializerOptions() { WriteIndented = true}));
+}
+
+
+//Explicity laading
+
+async Task UserToUserDetailExplicity()
+{
+    var users = await context.Users.ToListAsync();
+
+    foreach (var user in users)
+    {
+        context.Entry(user).Reference(u => u.UserDetail).Load();
+        Console.WriteLine($"user name is {user.Name} and address is {user.UserDetail?.Address} \r\n" );
+    }
+}
+
+async Task GetUsersFromSchool()
+{
+    var school =  context.Schools.FirstOrDefault(s => s.SchoolId == 1);
+
+    await context.Entry(school!).Collection(s=>s.Users!).LoadAsync();
+
+    //foreach (var user in school!.Users!)
+    //{
+    //    Console.WriteLine(JsonSerializer.Serialize(user,new JsonSerializerOptions() { WriteIndented = true }));
+    //}
+
+    var users = school!.Users!.ToList();
+    Console.WriteLine(JsonSerializer.Serialize(users, new JsonSerializerOptions() { WriteIndented = true }));
+
+}
+
+async Task GetTeacherFromUser()
+{
+    //var teachers = await context.Users.AsNoTracking()
+    //     .Include(u => u.TeacherUser)
+    //     .ThenInclude(u => u.Teacher)
+    //     .Select(x=> new
+    //     {
+    //         users= x,
+    //         teaxhers = x.TeacherUser.Select(x=>x.Teacher!.name)
+    //     })
+    //     .ToListAsync();
+
+    var users = await context.Users.ToListAsync();
+
+
+    foreach (var user in users)
+    {
+         context.Entry(user).Collection(x => x.TeacherUser).Load();
+        var tu = user.TeacherUser.ToList();
+
+        foreach (var teacher in tu)
+        {
+            context.Entry(teacher).Reference(x => x.Teacher).Load();
+
+            Console.WriteLine(JsonSerializer.Serialize(teacher.Teacher!.name,new JsonSerializerOptions() { WriteIndented = true}));
+        }
+
+    }
+
+    //context.Entry(tu).Reference(x=>x)
+
+}
+
+
+//Transaction
+
+async Task TransactionTest()
+{
+    var transaction = context.Database.BeginTransaction();
+
+    try
+    {
+        var newUser = new User { Email = "bgbg@123", Name = "bgbg" ,SchoolId = 1 };
+        await context.Users.AddAsync(newUser);
+        await context.SaveChangesAsync();
+        var userId = newUser.UserId;
+
+        var newUserDetail = new UserDetail { UserId = 3434 ,Address = "test",Age =22 };
+        await context.UserDetails.AddAsync(newUserDetail);
+        await context.SaveChangesAsync();
+        transaction.Commit();
+    }
+    catch (Exception)
+    {
+        transaction.Rollback();
+        throw;
+    }
+
+    //transactionStart.
+}
 
 //await AddData();
 //await MultipleAddTeam();
@@ -254,6 +360,13 @@ async Task GetAllTeachers()
 //await GetAllUsers();
 //await GetAllUserDetails();
 //await GetALLSchools();
-await GetAllTeachers();
+//await GetAllTeachers();
+//await GetAllTU();
 
+//await UserToUserDetailExplicity();
+//await GetUsersFromSchool();
+
+//await GetTeacherFromUser();
+
+await TransactionTest();
 Console.ReadLine();

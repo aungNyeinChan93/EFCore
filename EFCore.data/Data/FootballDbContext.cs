@@ -42,5 +42,7 @@ namespace EFCore.data.Data
         public DbSet<Teacher> Teachers { get; set; }
 
         public DbSet<TeacherUser> TeacherUsers { get; set; }
+
+        public DbSet<Manager> Managers { get; set; }
     }
 }
