@@ -13,9 +13,16 @@ namespace EFCore.domain.Entities
 
         public int LeagueId { get; set; }
 
-        [JsonIgnore]
+        //[JsonIgnore]
         public League? League { get; set; }
 
         public List<Player>? Palyers { get; set; }
+
+        //[JsonIgnore]
+        public Manager? Manager { get; set; }
+
+        public ICollection<Match> HomeMatches { get; set; }
+
+        public ICollection<Match> AwayMatches { get; set; }
     }
 }

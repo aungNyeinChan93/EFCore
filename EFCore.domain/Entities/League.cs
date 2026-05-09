@@ -11,7 +11,6 @@ namespace EFCore.domain.Entities
 
         public required string Name { get; set; }
 
-        [JsonIgnore]
         public List<Team>? Teams { get; set; }
 
         

@@ -26,5 +26,7 @@ namespace EFCore.domain.Entities
         public School? School { get; set; }
 
         public ICollection<TeacherUser> TeacherUser { get; set; }
+
+        public ICollection<Post> Posts { get; set; }
     }
 }

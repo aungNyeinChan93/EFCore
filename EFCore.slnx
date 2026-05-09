@@ -4,6 +4,7 @@
   </Folder>
   <Project Path="EFCore.api/EFCore.api.csproj" />
   <Project Path="EFCore.data/EFCore.data.csproj" />
+  <Project Path="EFCore.Data_02/EFCore.Data_02.csproj" Id="4c015712-ad9d-47c4-9b2a-f58851c2dbe5" />
   <Project Path="EFCore.domain/EFCore.domain.csproj" />
   <Project Path="EFCore.test/EFCore.test.csproj" />
 </Solution>

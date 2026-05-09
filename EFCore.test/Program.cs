@@ -3,6 +3,7 @@ using EFCore.data.Data;
 using EFCore.domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 
 var context = new FootballDbContext();
@@ -338,6 +339,120 @@ async Task TransactionTest()
     //transactionStart.
 }
 
+async Task GetAllPosts()
+{
+    var posts = await context.Posts.AsNoTracking()
+        //.Include(p => p.User)
+        //.Include(p => p.CategoryPost)
+        //.ThenInclude(p => p.Category)
+        .Select(x => new
+        {
+            posts = x,
+            user = x.User,
+            Categories = x.CategoryPost.Select(x => x.Category).ToList(),
+        })
+        .ToListAsync();
+
+    Console.WriteLine(JsonSerializer.Serialize(posts, new JsonSerializerOptions() { WriteIndented = true }));
+
+}
+
+async Task AllManagerFromTeam()
+{
+    var teams = await context.Teams.AsNoTracking()
+        .Include(t => t.Manager)
+        .Select(x => new
+        {
+            team = x,
+            manager = x.Manager 
+        })
+        .ToListAsync();
+
+    Console.WriteLine(JsonSerializer.Serialize(teams, new JsonSerializerOptions() { WriteIndented = true }));
+
+}
+
+async Task AddMatches()
+{
+    var matches = new List<Match>()
+    {
+        new Match{HomeTeamId = 1, AwayTeamId = 2},
+        new Match{HomeTeamId = 1, AwayTeamId = 3},
+        new Match{HomeTeamId = 1, AwayTeamId = 4},
+        new Match{HomeTeamId = 1, AwayTeamId = 5},
+        new Match{HomeTeamId = 1, AwayTeamId = 6},
+
+    };
+
+    await context.Matches.AddRangeAsync(matches);
+    var res = await context.SaveChangesAsync();
+
+    Console.WriteLine("Added Matches");
+
+}
+
+async Task TeamTest()
+{
+    var result = await context.Teams.AsNoTracking()
+        .Include(t=>t.Manager)
+        .Include(t=>t.League)
+        .Include(t=>t.Palyers)
+        .Include(t => t.HomeMatches)
+        .Include(t => t.AwayMatches)
+        .ToListAsync();
+     
+    //var result = await context.Teams.FirstOrDefaultAsync(t => t.TeamId == 1);
+
+    //context.Entry(result!).Collection(x => x!.HomeMatches).Load();
+    //context.Entry(result!).Collection(x => x!.AwayMatches).Load();
+    //context.Entry(result!).Reference(x => x.League).Load();
+    //context.Entry(result!).Reference(x => x.Manager).Load();
+    //context.Entry(result!).Collection(x=>x.Palyers!).Load();
+
+    Console.WriteLine(JsonSerializer.Serialize(result,new JsonSerializerOptions() {WriteIndented = true }));
+}
+
+async Task LeaguesToTeams()
+{
+    var lt = await context.Leagues.AsNoTracking()
+        .Include(l => l.Teams)
+        .Select(x => new
+        {
+            x.Name,
+            x.LeagueId,
+            T  =x.Teams
+        })
+        .ToListAsync();
+
+    Console.WriteLine(JsonSerializer.Serialize(lt, new JsonSerializerOptions() { WriteIndented = true, }));
+    //Console.WriteLine(JsonSerializer.Serialize(lt, new JsonSerializerOptions() { WriteIndented = true, ReferenceHandler = ReferenceHandler.Preserve }));
+
+}
+
+async Task FromTeamToHomeTeam()
+{
+    var result = await context.Teams
+        //.Include(q => q.HomeMatches)
+        //.ThenInclude(x => x.HomeTeam)
+        //.Include(q => q.AwayMatches)
+        .Select(x => new
+        {
+            x.Name,
+            x.League,
+            x.Palyers,
+            x.HomeMatches,
+            x.Manager,
+            x.AwayMatches,
+            //hone_players = x.HomeMatches.Select(x=>x.HomeTeam.Palyers),
+            //away_player = x.HomeMatches.Select(x=>x.AwayTeam.Palyers)
+
+        })
+        .ToListAsync();
+
+    Console.WriteLine(JsonSerializer.Serialize(result, new JsonSerializerOptions() { WriteIndented = true }));
+
+}
+
 //await AddData();
 //await MultipleAddTeam();
 //await ALlTeams();
@@ -368,5 +483,16 @@ async Task TransactionTest()
 
 //await GetTeacherFromUser();
 
-await TransactionTest();
+//await TransactionTest();
+
+//await GetAllPosts();
+//await AllManagerFromTeam();
+
+//await AddMatches();
+
+//await TeamTest();
+
+//await LeaguesToTeams();
+
+await FromTeamToHomeTeam();
 Console.ReadLine();

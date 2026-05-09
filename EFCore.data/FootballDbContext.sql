@@ -347,3 +347,144 @@ END;
 
 COMMIT;
 GO
+
+BEGIN TRANSACTION;
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260509081729_add_post_category'
+)
+BEGIN
+    CREATE TABLE [Categories] (
+        [CategoryId] int NOT NULL IDENTITY,
+        [Title] nvarchar(max) NOT NULL,
+        CONSTRAINT [PK_Categories] PRIMARY KEY ([CategoryId])
+    );
+END;
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260509081729_add_post_category'
+)
+BEGIN
+    CREATE TABLE [Managers] (
+        [ManagerId] int NOT NULL IDENTITY,
+        [Name] nvarchar(max) NOT NULL,
+        CONSTRAINT [PK_Managers] PRIMARY KEY ([ManagerId])
+    );
+END;
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260509081729_add_post_category'
+)
+BEGIN
+    CREATE TABLE [Posts] (
+        [PostId] int NOT NULL IDENTITY,
+        [Name] nvarchar(max) NOT NULL,
+        [Content] nvarchar(max) NOT NULL,
+        [UserId] int NOT NULL,
+        CONSTRAINT [PK_Posts] PRIMARY KEY ([PostId]),
+        CONSTRAINT [FK_Posts_Users_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users] ([UserId]) ON DELETE CASCADE
+    );
+END;
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260509081729_add_post_category'
+)
+BEGIN
+    CREATE TABLE [CategoryPosts] (
+        [CategoryId] int NOT NULL,
+        [PostId] int NOT NULL,
+        CONSTRAINT [PK_CategoryPosts] PRIMARY KEY ([CategoryId], [PostId]),
+        CONSTRAINT [FK_CategoryPosts_Categories_CategoryId] FOREIGN KEY ([CategoryId]) REFERENCES [Categories] ([CategoryId]) ON DELETE CASCADE,
+        CONSTRAINT [FK_CategoryPosts_Posts_PostId] FOREIGN KEY ([PostId]) REFERENCES [Posts] ([PostId]) ON DELETE CASCADE
+    );
+END;
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260509081729_add_post_category'
+)
+BEGIN
+    CREATE INDEX [IX_CategoryPosts_PostId] ON [CategoryPosts] ([PostId]);
+END;
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260509081729_add_post_category'
+)
+BEGIN
+    CREATE INDEX [IX_Posts_UserId] ON [Posts] ([UserId]);
+END;
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260509081729_add_post_category'
+)
+BEGIN
+    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+    VALUES (N'20260509081729_add_post_category', N'10.0.7');
+END;
+
+COMMIT;
+GO
+
+BEGIN TRANSACTION;
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260509084500_add_matches'
+)
+BEGIN
+    ALTER TABLE [Managers] ADD [TeamId] int NOT NULL DEFAULT 0;
+END;
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260509084500_add_matches'
+)
+BEGIN
+    CREATE TABLE [Matches] (
+        [HomeTeamId] int NOT NULL,
+        [AwayTeamId] int NOT NULL,
+        CONSTRAINT [PK_Matches] PRIMARY KEY ([HomeTeamId], [AwayTeamId]),
+        CONSTRAINT [FK_Matches_Teams_AwayTeamId] FOREIGN KEY ([AwayTeamId]) REFERENCES [Teams] ([TeamId]),
+        CONSTRAINT [FK_Matches_Teams_HomeTeamId] FOREIGN KEY ([HomeTeamId]) REFERENCES [Teams] ([TeamId])
+    );
+END;
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260509084500_add_matches'
+)
+BEGIN
+    CREATE UNIQUE INDEX [IX_Managers_TeamId] ON [Managers] ([TeamId]);
+END;
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260509084500_add_matches'
+)
+BEGIN
+    CREATE INDEX [IX_Matches_AwayTeamId] ON [Matches] ([AwayTeamId]);
+END;
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260509084500_add_matches'
+)
+BEGIN
+    ALTER TABLE [Managers] ADD CONSTRAINT [FK_Managers_Teams_TeamId] FOREIGN KEY ([TeamId]) REFERENCES [Teams] ([TeamId]) ON DELETE CASCADE;
+END;
+
+IF NOT EXISTS (
+    SELECT * FROM [__EFMigrationsHistory]
+    WHERE [MigrationId] = N'20260509084500_add_matches'
+)
+BEGIN
+    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+    VALUES (N'20260509084500_add_matches', N'10.0.7');
+END;
+
+COMMIT;
+GO

@@ -18,8 +18,10 @@ namespace EFCore.data.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //base.OnModelCreating(modelBuilder);
+
+            //TeacherUser
             modelBuilder.Entity<TeacherUser>()
-                .HasKey(tu=> new {tu.TeacherId,tu.UserId});
+                .HasKey(tu => new { tu.TeacherId, tu.UserId });
 
             modelBuilder.Entity<TeacherUser>()
                 .HasOne(tu => tu.Teacher)
@@ -27,9 +29,39 @@ namespace EFCore.data.Data
                 .HasForeignKey(tu => tu.TeacherId);
 
             modelBuilder.Entity<TeacherUser>()
-                .HasOne(tu=>tu.User)
-                .WithMany(u=> u.TeacherUser)
-                .HasForeignKey(tu=>tu.UserId);
+                .HasOne(tu => tu.User)
+                .WithMany(u => u.TeacherUser)
+                .HasForeignKey(tu => tu.UserId);
+
+
+            //CategoryPost
+            modelBuilder.Entity<CategoryPost>()
+                .HasKey(cp => new { cp.CategoryId, cp.PostId });
+
+            modelBuilder.Entity<CategoryPost>()
+                .HasOne(cp => cp.Category)
+                .WithMany(c => c.CategoryPost)
+                .HasForeignKey(cp => cp.CategoryId);
+
+            modelBuilder.Entity<CategoryPost>()
+                .HasOne(cp => cp.Post)
+                .WithMany(p => p.CategoryPost)
+                .HasForeignKey(cp => cp.PostId);
+
+            //mtm match
+            modelBuilder.Entity<Match>()
+                .HasKey(m => new { m.HomeTeamId, m.AwayTeamId });
+
+            modelBuilder.Entity<Match>()
+                .HasOne(m=> m.HomeTeam)
+                .WithMany(t=>t.HomeMatches)
+                .HasForeignKey(m=>m.HomeTeamId);
+
+            modelBuilder.Entity<Match>()
+                .HasOne(m => m.AwayTeam)
+                .WithMany(t => t.AwayMatches)
+                .HasForeignKey(m => m.AwayTeamId);
+
         }
 
         public DbSet<League> Leagues { get; set; }
@@ -44,5 +76,12 @@ namespace EFCore.data.Data
         public DbSet<TeacherUser> TeacherUsers { get; set; }
 
         public DbSet<Manager> Managers { get; set; }
+
+        public DbSet<Post> Posts { get; set; }
+        public DbSet<Category> Categories { get; set; }
+
+        public DbSet<CategoryPost> CategoryPosts { get; set; }
+
+        public DbSet<Match> Matches { get; set; }
     }
 }

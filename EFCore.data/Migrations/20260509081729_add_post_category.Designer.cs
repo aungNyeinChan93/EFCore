@@ -3,6 +3,7 @@ using EFCore.data.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EFCore.data.Migrations
 {
     [DbContext(typeof(FootballDbContext))]
-    partial class FootballDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260509081729_add_post_category")]
+    partial class add_post_category
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -82,30 +85,9 @@ namespace EFCore.data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TeamId")
-                        .HasColumnType("int");
-
                     b.HasKey("ManagerId");
 
-                    b.HasIndex("TeamId")
-                        .IsUnique();
-
                     b.ToTable("Managers");
-                });
-
-            modelBuilder.Entity("EFCore.domain.Entities.Match", b =>
-                {
-                    b.Property<int>("HomeTeamId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("AwayTeamId")
-                        .HasColumnType("int");
-
-                    b.HasKey("HomeTeamId", "AwayTeamId");
-
-                    b.HasIndex("AwayTeamId");
-
-                    b.ToTable("Matches");
                 });
 
             modelBuilder.Entity("EFCore.domain.Entities.Player", b =>
@@ -315,36 +297,6 @@ namespace EFCore.data.Migrations
                     b.Navigation("Post");
                 });
 
-            modelBuilder.Entity("EFCore.domain.Entities.Manager", b =>
-                {
-                    b.HasOne("EFCore.domain.Entities.Team", "Team")
-                        .WithOne("Manager")
-                        .HasForeignKey("EFCore.domain.Entities.Manager", "TeamId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Team");
-                });
-
-            modelBuilder.Entity("EFCore.domain.Entities.Match", b =>
-                {
-                    b.HasOne("EFCore.domain.Entities.Team", "AwayTeam")
-                        .WithMany("AwayMatches")
-                        .HasForeignKey("AwayTeamId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("EFCore.domain.Entities.Team", "HomeTeam")
-                        .WithMany("HomeMatches")
-                        .HasForeignKey("HomeTeamId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AwayTeam");
-
-                    b.Navigation("HomeTeam");
-                });
-
             modelBuilder.Entity("EFCore.domain.Entities.Player", b =>
                 {
                     b.HasOne("EFCore.domain.Entities.Team", "Team")
@@ -446,12 +398,6 @@ namespace EFCore.data.Migrations
 
             modelBuilder.Entity("EFCore.domain.Entities.Team", b =>
                 {
-                    b.Navigation("AwayMatches");
-
-                    b.Navigation("HomeMatches");
-
-                    b.Navigation("Manager");
-
                     b.Navigation("Palyers");
                 });
 

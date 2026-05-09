@@ -10,4 +10,8 @@
     <Folder Include="Interfaces\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\EFCore.Data_02\EFCore.Data_02.csproj" />
+  </ItemGroup>
+
 </Project>
