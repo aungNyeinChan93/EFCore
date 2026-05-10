@@ -3,8 +3,10 @@
     <File Path=".editorconfig" />
   </Folder>
   <Project Path="EFCore.api/EFCore.api.csproj" />
+  <Project Path="EFCore.BlazorApp1/EFCore.BlazorApp1.csproj" Id="94898e5b-cf77-4521-b349-5712685efcab" />
   <Project Path="EFCore.data/EFCore.data.csproj" />
   <Project Path="EFCore.Data_02/EFCore.Data_02.csproj" Id="4c015712-ad9d-47c4-9b2a-f58851c2dbe5" />
+  <Project Path="EFCore.Data_03/EFCore.Data_03.csproj" Id="312a9d98-d544-489b-83c8-59ac6f729323" />
   <Project Path="EFCore.domain/EFCore.domain.csproj" />
   <Project Path="EFCore.test/EFCore.test.csproj" />
 </Solution>

@@ -1,0 +1,49 @@
+﻿@page "/tests/one"
+@using EFCore.BlazorApp1.Data.Quotes
+@using System.Text.Json
+
+@inject PeopleDbContext _peopleContext;
+
+
+<h3>Tests</h3>
+
+
+@if (IsLoading)
+{
+    <p>Loading ... </p>
+}
+else
+{
+    if (Quotes is not null)
+    {
+        foreach (var quote in Quotes.quotes)
+        {
+            <p class="my-2 p-2">@(quote.quote)</p>
+        }
+    }
+}
+
+@code {
+    public bool IsLoading { get; set; } = true;
+
+    public QuotesModel? Quotes { get; set; }
+
+    protected override void OnInitialized()
+    {
+        this.GetQuotes();
+    }
+
+    private void GetQuotes()
+    {
+        var quotesStr = File.ReadAllText("Data/Quotes/quotes.json");
+        var quotes = JsonSerializer.Deserialize<QuotesModel>(quotesStr);
+        Quotes = quotes!;
+        if (Quotes.quotes.Count >= 1)
+        {
+            IsLoading = false;
+        }
+    }
+
+
+
+}

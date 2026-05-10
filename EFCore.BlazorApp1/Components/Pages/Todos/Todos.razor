@@ -1,0 +1,63 @@
+﻿@page "/todos"
+
+@using System.Text.Json
+@using EFCore.Data_03.Entity
+@inject PeopleDbContext _context;
+
+<h3>Todos</h3>
+
+@if (IsLoading)
+{
+    <p>Loading ... </p>
+}
+else
+{
+    if (MyTodos.Count >=1)
+    {
+        foreach (var todo in MyTodos)
+        {
+            <p class="text-danger my-4 p-2">@(todo.todo)</p>
+        }
+    }
+}
+
+@code {
+    public bool IsLoading { get; set; } = true;
+
+    public List<Todo> MyTodos { get; set; } = new List<Todo>();
+
+    protected override void OnInitialized()
+    {
+        // base.OnInitialized();
+        this.AddTodo();
+        this.GetAllTodos();
+    }
+
+    private void AddTodo()
+    {
+        if (_context.Todos.Count() == 0)
+        {
+            var str = File.ReadAllText("Data/Todos/todos.json");
+            var todos = JsonSerializer.Deserialize<List<Todo>>(str);
+            if (todos is not null)
+            {
+                _context.Todos.AddRange(todos);
+                _context.SaveChanges();
+
+            }
+        }
+    }
+
+    private void GetAllTodos()
+    {
+        var todos = _context.Todos.ToList();
+
+        if (todos is not null)
+        {
+            IsLoading = false;
+            MyTodos = todos;
+        }
+    }
+
+   
+}

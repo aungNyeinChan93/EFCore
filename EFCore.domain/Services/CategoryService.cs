@@ -1,5 +1,6 @@
 ﻿using EFCore.Data_02.Data;
 using EFCore.Data_02.Entities;
+using EFCore.domain.Mappers;
 using EFCore.domain.Models.Categories;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -17,17 +18,27 @@ namespace EFCore.domain.Services
             _context = new AppDbContext2();
         }
 
-        public async Task<CategoryResponseModel> GetAllAsync()
+        public async Task<CategoryResponseModel?> GetAllAsync()
         {
             var categories = await _context.Categories.AsNoTracking()
-                .Select(x => new CategoryDto { CategoryId = x.CategoryId, Name = x.Name, CategoryPosts = x.CategoryPosts })
+                .Include(x=>x.CategoryPosts).ThenInclude(x=>x.Post)
+                //.Select(x => new CategoryDto { CategoryId = x.CategoryId, Name = x.Name, CategoryPosts = x.CategoryPosts })
+                //.Select(x=>new
+                //{
+                //    x,
+                //    x.CategoryPosts,
+                //    categories = x.CategoryPosts.Select(x=>x.Category.Name).ToList(),    
+                //})
+                .Select(x=>x.ToCategoryDto())
                 .ToListAsync();
+
+
+            var res = categories.Any(x=>x.CategoryPosts!.Any(x=>x.Category.Name.Contains("invention")));
 
             var responseModle = new CategoryResponseModel()
             {
                 Categories = categories
             };
-
             return responseModle;
         }
 
